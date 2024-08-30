@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Dashboard from './component/dashboard';
+import Login from './component/login';
 
-function App() {
+const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const handleLoginSuccess = (username) => {
+    localStorage.setItem('username', username);
+    setIsAuthenticated(true); 
+  };
+
+  useEffect(() => {
+    const username = localStorage.getItem('username');
+    if (username) {
+      setIsAuthenticated(true); 
+    }
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route
+        path="/"
+        element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/login"
+        element={<Login onLoginSuccess={handleLoginSuccess} />}
+      />
+    </Routes>
   );
-}
+};
 
 export default App;
